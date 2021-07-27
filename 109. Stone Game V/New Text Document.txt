@@ -1,0 +1,40 @@
+class Solution {
+public:
+    int playGame(vector<int>& stoneValue,int s,int e,vector<vector<int>>& dp)
+    {
+        if(s>e) return 0;
+        else if(dp[s][e]!=-1) return dp[s][e];
+        int right=0;
+        for(int i=s;i<=e;i++)
+        {
+            right=right+stoneValue[i];
+        }
+        int left=0;
+        int ans=0;
+        for(int i=s;i<e;i++) //Since we cannot exhaust right completely hence i<e and not i<=e
+        {
+            left=left+stoneValue[i];
+            right=right-stoneValue[i];
+            if(left<right) ans=max(ans,left+playGame(stoneValue,s,i,dp));
+            else if(left==right) 
+            {
+                int scenario1=left+playGame(stoneValue,s,i,dp);
+                int scenario2=left+playGame(stoneValue,i+1,e,dp);
+                ans=max(ans,max(scenario1,scenario2));
+            }
+            else if(left>right)
+            {
+                ans=max(ans,right+playGame(stoneValue,i+1,e,dp));
+            }
+        }
+        return dp[s][e]=ans;
+    }
+    
+    int stoneGameV(vector<int>& stoneValue) {
+        int n=stoneValue.size();
+        vector<vector<int>> dp(n,vector<int>(n,-1));
+        int result=playGame(stoneValue,0,n-1,dp);
+        
+        return result;
+    }
+};
